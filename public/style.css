@@ -1,0 +1,44 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #f0f4f7;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  margin-top: 30px;
+}
+
+.lot {
+  display: grid;
+  grid-template-columns: repeat(5, 100px);
+  gap: 10px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.spot {
+  background-color: #dcdcdc;
+  border-radius: 8px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.spot:hover {
+  transform: scale(1.05);
+}
+
+.spot.occupied {
+  background-color: #ff7675;
+  color: white;
+}
+
+.spot.mine {
+  background-color: #55efc4;
+  color: black;
+}
