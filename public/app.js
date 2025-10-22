@@ -56,26 +56,26 @@ onAuthStateChanged(auth, (user) => {
 for (let i = 1; i <= 15; i++) {
   const spotRef = doc(db, "parkingSpots", `spot-${i}`);
   onSnapshot(spotRef, (docSnap) => {
-    const spotDiv = document.getElementById(`spot-${i}`);
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      if (data.occupiedBy) {
-        if (currentUser && data.occupiedBy === currentUser.uid) {
-          spotDiv.className = "spot mine";
-          spotDiv.textContent = `#${i}\nYour Car`;
-        } else {
-          spotDiv.className = "spot occupied";
-          spotDiv.textContent = `#${i}\nTaken`;
-        }
+  const spotDiv = document.getElementById(`spot-${i}`);
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    if (data.occupiedBy) {
+      if (currentUser && data.occupiedBy === currentUser.uid) {
+        spotDiv.className = "spot mine";
+        spotDiv.textContent = `#${i}\nYour Car`;
       } else {
-        spotDiv.className = "spot";
-        spotDiv.textContent = i;
+        spotDiv.className = "spot occupied";
+        spotDiv.textContent = `#${i}\nTaken`;
       }
     } else {
-      // initialize document
-      setDoc(spotRef, { occupiedBy: null });
+      spotDiv.className = "spot empty";
+      spotDiv.textContent = i;
     }
-  });
+  } else {
+    // initialize document
+    setDoc(spotRef, { occupiedBy: null });
+  }
+});
 }
 
 // --- Click Handling ---

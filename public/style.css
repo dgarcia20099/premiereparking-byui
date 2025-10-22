@@ -19,26 +19,32 @@ body {
 }
 
 .spot {
-  background-color: #dcdcdc;
   border-radius: 8px;
   height: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, background-color 0.3s;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Empty spot = green */
+.spot.empty {
+  background-color: #55efc4; /* light green */
+}
+
+/* Occupied (someone else's car) = red */
+.spot.occupied {
+  background-color: #ff7675; /* red */
+}
+
+/* Your car = blue */
+.spot.mine {
+  background-color: #74b9ff;
 }
 
 .spot:hover {
   transform: scale(1.05);
-}
-
-.spot.occupied {
-  background-color: #ff7675;
-  color: white;
-}
-
-.spot.mine {
-  background-color: #55efc4;
-  color: black;
 }
