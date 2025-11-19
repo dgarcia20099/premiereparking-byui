@@ -1,7 +1,22 @@
+/* Load your Interstate font files */
+@font-face {
+  font-family: "Interstate";
+  src: url("fonts/Interstate-Regular.otf") format("opentype");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Interstate";
+  src: url("fonts/Interstate-Bold.otf") format("opentype");
+  font-weight: bold;
+}
+
+/* Dark asphalt background + white text */
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Interstate", sans-serif;
   text-align: center;
-  background: #f0f4f7;
+  background: #1e1e1e; /* asphalt grey */
+  color: white;
   margin: 0;
   padding: 0;
 }
@@ -10,16 +25,18 @@ body {
   margin-top: 30px;
 }
 
+/* Parking lot grid */
 .lot {
   display: grid;
   grid-template-columns: repeat(5, 100px);
-  gap: 10px;
+  gap: 0; /* we'll use borders for the white parking lines */
   justify-content: center;
   margin-top: 30px;
 }
 
+/* Parking spot base */
 .spot {
-  border-radius: 8px;
+  border-radius: 4px;
   height: 100px;
   display: flex;
   justify-content: center;
@@ -27,22 +44,25 @@ body {
   cursor: pointer;
   transition: transform 0.2s, background-color 0.3s;
   font-weight: bold;
-  color: #fff;
+  color: white;
+
+  /* White parking lines */
+  border: 3px solid white;
 }
 
-/* Empty spot = green */
+/* Empty spot (dark green hue for dark mode) */
 .spot.empty {
-  background-color: #55efc4; /* light green */
+  background-color: #1f3d2d;
 }
 
-/* Occupied (someone else's car) = red */
+/* Occupied (dark red tone) */
 .spot.occupied {
-  background-color: #ff7675; /* red */
+  background-color: #532222;
 }
 
-/* Your car = blue */
+/* Your car (dark blue tone) */
 .spot.mine {
-  background-color: #74b9ff;
+  background-color: #1f2f52;
 }
 
 .spot:hover {
