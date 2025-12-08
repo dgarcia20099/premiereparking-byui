@@ -86,27 +86,62 @@ onAuthStateChanged(auth, (user) => {
 // ---------------------------------------------------------------------
 // 🚦 FUNCTION: Ensure each user can only occupy ONE parking spot
 // ---------------------------------------------------------------------
+import { writeBatch } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
 async function tryOccupySpot(spotNumber, currentUser) {
   if (!currentUser) {
     alert("You must be logged in to reserve a spot.");
     return;
   }
 
-  const spotsRef = collection(db, "parkingSpots");
+  try {
+    const spotsRef = collection(db, "parkingSpots");
 
-  // Check if user already has a spot
-  const q = query(spotsRef, where("occupiedBy", "==", currentUser.uid));
-  const snap = await getDocs(q);
+    // Find any existing spot owned by this user
+    const q = query(spotsRef, where("occupiedBy", "==", currentUser.uid));
+    const snap = await getDocs(q);
 
-  if (!snap.empty) {
-    alert("You already have a reserved parking spot.");
-    return;
+    const batch = writeBatch(db);
+
+    // ✅ If user already has a spot → clear it
+    snap.forEach((docSnap) => {
+      batch.update(docSnap.ref, {
+        occupiedBy: null
+      });
+    });
+
+    // ✅ Assign the NEW spot to the user
+    const newSpotRef = doc(db, "parkingSpots", `spot-${spotNumber}`);
+    batch.set(
+      newSpotRef,
+      { occupiedBy: currentUser.uid },
+      { merge: true }
+    );
+
+    // ✅ Commit both changes together
+    await batch.commit();
+
+  } catch (err) {
+    console.error("Error changing spots:", err);
+    alert("Something went wrong. Try again.");
   }
-
-  // OK to take the spot
-  const spotRef = doc(db, "parkingSpots", `spot-${spotNumber}`);
-  await updateDoc(spotRef, { occupiedBy: currentUser.uid });
 }
+
+async function releaseMySpot(spotNumber, currentUser) {
+  if (!currentUser) return;
+
+  try {
+    const spotRef = doc(db, "parkingSpots", `spot-${spotNumber}`);
+    await updateDoc(spotRef, {
+      occupiedBy: null
+    });
+  } catch (err) {
+    console.error("Error releasing spot:", err);
+    alert("Failed to release spot.");
+  }
+}
+
+
 
 // ---------------------------------------------------------------------
 // 🔁 REAL-TIME LISTENERS FOR SPOTS
@@ -122,14 +157,21 @@ for (let i = 1; i <= 15; i++) {
       const data = docSnap.data();
 
       if (data.occupiedBy) {
-        if (currentUser && data.occupiedBy === currentUser.uid) {
-          spotDiv.className = "spot mine";
-          spotDiv.textContent = `#${i}\nYour Car`;
-        } else {
-          spotDiv.className = "spot occupied";
-          spotDiv.textContent = `#${i}\nTaken`;
-        }
-      } else {
+  if (currentUser && data.occupiedBy === currentUser.uid) {
+    spotDiv.className = "spot mine";
+    spotDiv.textContent = `#${i}\nYour Car`;
+
+    // ✅ CLICK TO RELEASE YOUR OWN SPOT
+    spotDiv.onclick = () => releaseMySpot(i, currentUser);
+
+  } else {
+    spotDiv.className = "spot occupied";
+    spotDiv.textContent = `#${i}\nTaken`;
+
+    // ❌ Prevent clicking others' spots
+    spotDiv.onclick = null;
+  }
+} else {
         // empty
         spotDiv.className = "spot empty";
         spotDiv.textContent = i;

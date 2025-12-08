@@ -68,3 +68,16 @@ body {
 .spot:hover {
   transform: scale(1.05);
 }
+@media (max-width: 600px) {
+  .lot {
+    grid-template-columns: repeat(3, 1fr); /* 3 per row on phones */
+  }
+
+  .container {
+    margin-top: 10px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+}
